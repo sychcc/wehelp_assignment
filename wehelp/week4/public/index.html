@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>歡迎光臨，請輸入信箱密碼</h2>
+      </div>
+      <div class="main">
+        <h3>登入系統</h3>
+        <form id="login_form">
+          <div>
+            <label for="email">信箱</label>
+            <input id="email" type="email" name="email" />
+          </div>
+          <div>
+            <label for="password">密碼</label>
+            <input id="password" type="password" name="password" />
+          </div>
+          <div>
+            <label for="checkbox">同意條款</label>
+            <input
+              type="checkbox"
+              name="checkbox"
+              id="checkbox"
+              value="agreed"
+            />
+          </div>
+          <div><button class="button" type="submit">登入</button></div>
+        </form>
+      </div>
+      <hr />
+      <div class="hotel_info">
+        <h3>取得旅館資訊</h3>
+        <div class="hotel_box">
+          <div class="hotel_no">
+            <label for="no">編號</label>
+            <input id="no" type="text" name="hotel_no" />
+          </div>
+          <div class="hotel_get">
+            <button id="hotel_button" type="submit">取得</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      let checkbox = document.querySelector("#checkbox");
+      let button = document.querySelector(".button");
+      button.addEventListener("click", (e) => {
+        if (!checkbox.checked) {
+          e.preventDefault();
+          alert("請勾選同意條款");
+          return;
+        }
+        connectLogin();
+      });
+      async function connectLogin() {
+        let email = document.querySelector("#email").value;
+        let password = document.querySelector("#password").value;
+        let response = await fetch("/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        });
+        let result = await response.json();
+        window.location.href = result.redirect_url; // 前端進行跳轉
+      }
+      //取得hotel資訊
+      let hotel_button = document.querySelector("#hotel_button");
+
+      hotel_button.addEventListener("click", (e) => {
+        let hotel_no = document.querySelector("#no").value;
+        e.preventDefault();
+        if (Number(hotel_no) <= 0) {
+          alert("請輸入正整數");
+          return;
+        }
+        window.location.href = `/hotel/${hotel_no}`;
+      });
+    </script>
+  </body>
+</html>

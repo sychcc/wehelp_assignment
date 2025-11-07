@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hotel Page</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>旅館的資訊</h2>
+      </div>
+      <div class="hotel_msg">
+        {% if ch_name and en_name and tel %}
+        <p>{{ ch_name }}、{{ en_name }}、{{ tel }}</p>
+        <a href="/">返回首頁</a>
+        {% else %}
+        <p>{{ msg }}</p>
+        <a href="/">返回首頁</a>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>
