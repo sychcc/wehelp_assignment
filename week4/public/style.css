@@ -1,0 +1,67 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+.header {
+  font-size: 30px;
+  background-color: #223344;
+  color: white;
+  padding: 30px 0;
+}
+.main h3 {
+  margin: 20px auto 10px;
+  padding: 0;
+  font-size: 25px;
+}
+.main div {
+  margin-bottom: 8px;
+  font-size: 22px;
+}
+.main .button {
+  padding: 3px 8px;
+}
+
+/*ohoh*/
+.error_msg {
+  font-size: 25px;
+  padding-top: 30px;
+}
+/*member*/
+.success_msg {
+  font-size: 25px;
+  padding-top: 30px;
+}
+
+/*hotel 查詢頁*/
+.hotel_info {
+  margin-top: 30px;
+}
+.hotel_info h3 {
+  margin: 0px auto 10px;
+  padding: 0;
+  font-size: 25px;
+}
+.hotel_box {
+  margin-bottom: 8px;
+  font-size: 22px;
+}
+.hotel_no {
+  margin-bottom: 10px;
+}
+.hotel_get button {
+  padding: 3px 8px;
+}
+/*hotel result*/
+.hotel_msg {
+  padding: 30px 0;
+  font-size: 25px;
+}
+.hotel_msg p {
+  margin-bottom: 10px;
+}
