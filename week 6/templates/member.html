@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Member Page</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>歡迎光臨，這是會員頁</h2>
+      </div>
+      <div class="success_msg">
+        <p><span id="name">{{ name }}</span> ,歡迎登入系統</p>
+        <a href="/logout">登出系統</a>
+      </div>
+      <hr />
+      <div>
+        <h3>快來留言吧</h3>
+        內容<input id="message" type="text" /><br />
+        <button id="add">送出</button>
+      </div>
+      <hr />
+      <div id="board">
+        <!-- 使用 Jinja2 渲染留言 -->
+        {% for msg in messages %}
+        <div>
+          {{ msg.name }}: {{ msg.content }} {% if msg.member_id == member_id %}
+          <button onclick="deleteMessage({{ msg.id }})">X</button>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <script>
+      const currentUserId = {{ member_id }};  // 從後端直接傳入當前用戶 ID
+
+      let addBtn = document.querySelector("#add");
+
+      // 新增留言後重新取得留言列表
+      async function getMessage() {
+        let response = await fetch("/message", { method: "GET" });
+        let result = await response.json();
+        let board = document.querySelector("#board");
+        board.innerHTML = "";
+
+        for (let i = 0; i < result.length; i++) {
+          let msg = result[i];
+          let html = `${msg.name}: ${msg.content}`;
+          // 只有自己才能看到 X 按鈕
+          if (msg.member_id === currentUserId) {
+            html += ` <button onclick="deleteMessage(${msg.id})">X</button>`;
+          }
+          board.innerHTML += `<div>${html}</div>`;
+        }
+      }
+
+      // 新增留言
+      addBtn.addEventListener("click", () => {
+        let message = document.querySelector("#message").value;
+        if (!message.trim()) {
+          alert("請輸入留言內容");
+          return;
+        }
+
+        async function postMessage() {
+          let response = await fetch("/createMessage", {
+            method: "POST",
+            body: JSON.stringify({ content: message }),
+          });
+          let result = await response.json();
+
+          if (result.ok) {
+            document.querySelector("#message").value = "";  // 清空輸入框
+            getMessage();  // 重新載入留言
+          } else {
+            alert("留言失敗");
+          }
+        }
+        postMessage();
+      });
+
+      // 刪除留言
+      async function deleteMessage(id) {
+        if (!confirm("確定要刪除這則留言嗎？")) {
+          return;
+        }
+
+        let response = await fetch("/deleteMessage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: id }),
+        });
+        let result = await response.json();
+
+        if (result.ok) {
+          getMessage();  // 重新載入留言
+        } else {
+          alert(result.msg || "刪除失敗");
+        }
+      }
+    </script>
+  </body>
+</html>
