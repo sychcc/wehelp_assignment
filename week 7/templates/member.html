@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Member Page</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>歡迎光臨，這是會員頁</h2>
+      </div>
+      <div class="success_msg">
+        <p><span id="name">{{ name }}</span> ,歡迎登入系統</p>
+        <a href="/logout">登出系統</a>
+      </div>
+      <hr />
+      <div>
+        <h3>查詢會員姓名</h3>
+        <input id="id_query" type="text" />
+        <button id="query_btn">查詢</button>
+      </div>
+      <div id="member_info"></div>
+      <div>
+        <h3>更新我的姓名</h3>
+        <input id="new_name" type="text" />
+        <button id="update_name">更新</button>
+      </div>
+      <div id="update_status"></div>
+      <div>
+        <h3>誰查詢了我</h3>
+        <button id="update_searcher">更新</button>
+      </div>
+      <div id="searchers"></div>
+    </div>
+
+    <script>
+      //查詢會員欄位
+      let query_btn = document.querySelector("#query_btn");
+
+      query_btn.addEventListener("click", () => getMember());
+      async function getMember() {
+        let id = document.querySelector("#id_query").value;
+        let response = await fetch(`/api/member/${id}`, { method: "GET" });
+        let result = await response.json();
+        console.log(result);
+        let member_info = document.querySelector("#member_info");
+        member_info.innerHTML = "";
+        if (result.data) {
+          member_info.innerHTML = `${result.data.name}(${result.data.email})`;
+        } else {
+          member_info.innerHTML = "No Data";
+        }
+      }
+
+      // const currentUserId = {{ member_id }};  // 從後端直接傳入當前用戶 ID
+      let update_btn = document.querySelector("#update_name");
+      update_btn.addEventListener("click", () => update_name());
+      async function update_name() {
+        let new_name = document.querySelector("#new_name").value;
+        let response = await fetch("/api/member", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name: new_name }),
+        });
+        let result = await response.json();
+        console.log(result);
+        let update_status = document.querySelector("#update_status");
+        update_status.innerHTML = "";
+        if (result.ok) {
+          let nameTag = document.querySelector("#name");
+          nameTag.textContent = `${new_name}`;
+          update_status.innerHTML = "更新成功";
+        } else {
+          update_status.innerHTML = "Failed to Update";
+        }
+      }
+      //誰查詢了我
+      let searchers_btn = document.querySelector("#update_searcher");
+      let searchers = document.querySelector("#searchers");
+      searchers_btn.addEventListener("click", () => show_searchers());
+      async function show_searchers() {
+        searchers.innerHTML = "";
+        let response = await fetch("/api/query");
+        let result = await response.json();
+        console.log(result);
+        if (result.length > 0) {
+          result.forEach((row) => {
+            searchers.innerHTML += `${row.name}(${row.record_time})</br>`;
+          });
+        } else {
+          searchers.innerHTML = `沒人搜你ＱＱ`;
+        }
+      }
+    </script>
+  </body>
+</html>
